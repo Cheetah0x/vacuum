@@ -1,0 +1,17 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Body of the vacuum -->
+  <rect x="60" y="120" width="80" height="40" rx="10" fill="#555" />
+  
+  <!-- Handle -->
+  <line x1="100" y1="120" x2="130" y2="40" stroke="#777" stroke-width="6" />
+  
+  <!-- Hose -->
+  <path d="M130 40 C140 60, 160 60, 160 80 C160 100, 140 100, 130 120" stroke="#999" stroke-width="6" fill="none" />
+
+  <!-- Wheels -->
+  <circle cx="70" cy="165" r="10" fill="#333" />
+  <circle cx="130" cy="165" r="10" fill="#333" />
+  
+  <!-- Floor head -->
+  <rect x="115" y="160" width="30" height="10" fill="#444" />
+</svg>
