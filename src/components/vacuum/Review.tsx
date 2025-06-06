@@ -7,16 +7,29 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { FileText, Loader2, DollarSign, Clock, Zap } from "lucide-react"
 import type { VacuumState } from "../../types/vacuum-state"
+import { ChainIcon } from "../ChainIcon"
 
 interface ReviewStepProps extends VacuumState {}
 
 const availableDestinationChains = [
-  { id: 1, name: "Ethereum", icon: "🔷" },
-  { id: 137, name: "Polygon", icon: "🟣" },
-  { id: 10, name: "Optimism", icon: "🔴" },
-  { id: 42161, name: "Arbitrum", icon: "🔵" },
-  { id: 8453, name: "Base", icon: "🔵" },
+  { id: 1, name: "Ethereum", chainName: "eth-mainnet" },
+  { id: 137, name: "Polygon", chainName: "matic-mainnet" },
+  { id: 10, name: "Optimism", chainName: "optimism-mainnet" },
+  { id: 42161, name: "Arbitrum", chainName: "arbitrum-mainnet" },
+  { id: 8453, name: "Base", chainName: "base-mainnet" },
 ]
+
+// Helper function to get proper chain display name
+const getChainDisplayName = (chainName: string): string => {
+  const chainMap: Record<string, string> = {
+    "eth-mainnet": "Ethereum",
+    "matic-mainnet": "Polygon", 
+    "optimism-mainnet": "Optimism",
+    "arbitrum-mainnet": "Arbitrum",
+    "base-mainnet": "Base"
+  }
+  return chainMap[chainName] || chainName.replace("-mainnet", "").replace("-", " ")
+}
 
 export const ReviewStep: React.FC<ReviewStepProps> = ({
   chainSelections,
@@ -56,7 +69,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               </div>
               <div className="p-3 bg-muted rounded-lg">
                 <div className="text-sm text-muted-foreground">USD Value</div>
-                <div className="text-xl font-bold">${totalSelectedUsdValue.toLocaleString()}</div>
+                <div className="text-xl font-bold">${totalSelectedUsdValue.toFixed(2)}</div>
               </div>
             </div>
 
@@ -67,7 +80,14 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               <div className="space-y-2">
                 {selectedChains.map((chain, index) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                    <span className="text-sm">{chain.chainName.replace("-mainnet", "").replace("-", " ")}</span>
+                    <div className="flex items-center gap-2">
+                      <ChainIcon 
+                        chainName={chain.chainName} 
+                        size={20}
+                        className="w-5 h-5"
+                      />
+                      <span className="text-sm font-medium">{getChainDisplayName(chain.chainName)}</span>
+                    </div>
                     <span className="font-medium">{Number.parseFloat(chain.amount).toLocaleString()} USDC</span>
                   </div>
                 ))}
@@ -79,7 +99,11 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
             <div>
               <h4 className="font-medium mb-2">Destination</h4>
               <div className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                <span className="text-lg">{selectedDestination?.icon}</span>
+                <ChainIcon 
+                  chainName={selectedDestination?.chainName || ""} 
+                  size={20}
+                  className="w-5 h-5"
+                />
                 <span className="font-medium">{selectedDestination?.name}</span>
               </div>
             </div>

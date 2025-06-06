@@ -1,5 +1,3 @@
-
-
 import type React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -11,17 +9,19 @@ import { Badge } from "@/components/ui/badge"
 import { Target, DollarSign } from "lucide-react"
 import { formatUnits } from "viem"
 import type { VacuumState } from "../../types/vacuum-state"
-import { chainIcons, getChainIconData } from "../../utils/helpers"
+
+import { ChainIcon } from "../ChainIcon"
+import { TokenIcon } from "../TokenIcon"
 
 interface SelectionStepProps extends VacuumState {}
 
 
 const availableDestinationChains = [
-  { id: 1, name: "Ethereum", icon: "🔷" },
-  { id: 137, name: "Polygon", icon: "🟣" },
-  { id: 10, name: "Optimism", icon: "🔴" },
-  { id: 42161, name: "Arbitrum", icon: "🔵" },
-  { id: 8453, name: "Base", icon: "🔵" },
+  { id: 1, name: "Ethereum", chainName: "eth-mainnet" },
+  { id: 137, name: "Polygon", chainName: "matic-mainnet" },
+  { id: 10, name: "Optimism", chainName: "optimism-mainnet" },
+  { id: 42161, name: "Arbitrum", chainName: "arbitrum-mainnet" },
+  { id: 8453, name: "Base", chainName: "base-mainnet" },
 ]
 
 export const SelectionStep: React.FC<SelectionStepProps> = ({
@@ -61,7 +61,11 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                 {availableDestinationChains.map((chain) => (
                   <SelectItem key={chain.id} value={chain.id.toString()}>
                     <div className="flex items-center gap-2">
-                      <span>{chain.icon}</span>
+                      <ChainIcon 
+                        chainName={chain.chainName} 
+                        size={20}
+                        className="w-5 h-5"
+                      />
                       <span>{chain.name}</span>
                     </div>
                   </SelectItem>
@@ -100,12 +104,17 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                           }
                         />
                         <div className="flex items-center gap-2">
-                          <span className="text-xl">{getChainIconData(chain.chainName).src || "⚡"}</span>
+                          <ChainIcon 
+                            chainName={chain.chainName} 
+                            size={24}
+                            className="w-6 h-6"
+                          />
                           <div>
                             <div className="font-medium">
                               {chain.chainName.replace("-mainnet", "").replace("-", " ")}
                             </div>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-sm text-muted-foreground flex items-center gap-1">
+                              <TokenIcon symbol="USDC" size={16} className="w-4 h-4" />
                               Available: {formatUnits(BigInt(chain.maxAmount), 6)} USDC
                             </div>
                           </div>
@@ -123,13 +132,16 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                           </Label>
                           <Input
                             id={`amount-${index}`}
-                            type="number"
+                            type="text"
                             value={chain.amount}
-                            onChange={(e) => handleChainSelectionChange(index, "amount", e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              // Only allow numbers and decimal point
+                              if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                                handleChainSelectionChange(index, "amount", value)
+                              }
+                            }}
                             placeholder="0.00"
-                            max={chain.maxAmount}
-                            min="0"
-                            step="0.01"
                             className="mt-1"
                           />
                         </div>
@@ -166,8 +178,13 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                 </div>
                 <div className="p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
                   <div className="text-sm text-blue-700 dark:text-blue-300">Destination</div>
-                  <div className="text-lg font-bold text-blue-900 dark:text-blue-100">
-                    {selectedDestination?.icon} {selectedDestination?.name}
+                  <div className="text-lg font-bold text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                    <ChainIcon 
+                      chainName={selectedDestination?.chainName || ""} 
+                      size={20}
+                      className="w-5 h-5"
+                    />
+                    {selectedDestination?.name}
                   </div>
                 </div>
               </div>
