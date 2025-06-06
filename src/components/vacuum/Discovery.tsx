@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -7,6 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { Search, Loader2, AlertCircle, CheckCircle } from "lucide-react"
 import type { VacuumState } from "../../types/vacuum-state"
 import { ChainIcon } from "../ChainIcon"
+import { TokenIcon } from "../TokenIcon"
+import { getChainDisplayName } from "../../utils/helpers"
+
 
 interface DiscoveryStepProps extends VacuumState {}
 
@@ -20,7 +21,7 @@ export const DiscoveryStep: React.FC<DiscoveryStepProps> = ({
   const hasUSDC =
     hasScanned &&
     multiChainData.items.some(
-      (chain: any) => chain.items?.length > 0 && Number.parseFloat(chain.items[0].balance || "0") > 0,
+      (chain: any) => chain.items?.length > 0 && Number.parseFloat(chain.items[0].balance || "0") / 1000000 > 0,
     )
 
   return (
@@ -101,9 +102,8 @@ export const DiscoveryStep: React.FC<DiscoveryStepProps> = ({
                           </div>
                           <div>
                             <div className="font-medium">
-                              {chainData.chain_name.replace("-mainnet", "").replace("-", " ")}
+                              {getChainDisplayName(chainData.chain_name)}
                             </div>
-                            <div className="text-sm text-muted-foreground">{chainData.chain_name}</div>
                           </div>
                         </div>
 
@@ -111,10 +111,11 @@ export const DiscoveryStep: React.FC<DiscoveryStepProps> = ({
                           {chainData.hasError ? (
                             <Badge variant="destructive">Error</Badge>
                           ) : chainData.items?.length > 0 &&
-                            Number.parseFloat(chainData.items[0].balance || "0") > 0 ? (
+                            Number.parseFloat(chainData.items[0].balance || "0") / 1000000 > 0 ? (
                             <div>
-                              <div className="font-bold text-lg">
-                                {Number.parseFloat(chainData.items[0].balance || "0").toLocaleString()} USDC
+                              <div className="font-bold text-lg flex items-center gap-1">
+                                {(Number.parseFloat(chainData.items[0].balance || "0") / 1000000).toFixed(2)}
+                                <TokenIcon symbol="USDC" size={20} className="w-5 h-5" />
                               </div>
                               <div className="text-sm text-emerald-600">
                                 ${Number.parseFloat(chainData.items[0].quote || "0").toLocaleString()}

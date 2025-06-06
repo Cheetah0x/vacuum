@@ -12,6 +12,7 @@ import type { VacuumState } from "../../types/vacuum-state"
 
 import { ChainIcon } from "../ChainIcon"
 import { TokenIcon } from "../TokenIcon"
+import { getChainDisplayName } from "../../utils/helpers"
 
 interface SelectionStepProps extends VacuumState {}
 
@@ -38,10 +39,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
   return (
     <div className="p-6">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-full mb-4">
-          <Target className="w-8 h-8 text-white" />
-        </div>
-        <h2 className="text-2xl font-bold mb-2">Configure Consolidation</h2>
+        <h2 className="text-2xl font-bold mb-2">Consolidate </h2>
         <p className="text-muted-foreground">Select which chains to consolidate from and choose your destination.</p>
       </div>
 
@@ -91,67 +89,56 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                 <Card
                   key={chain.chainName}
                   className={`p-4 transition-all ${
-                    chain.selected ? "ring-2 ring-blue-500 bg-blue-50/50 dark:bg-blue-950/50" : ""
+                    Number.parseFloat(chain.amount || "0") > 0 ? "ring-2 ring-blue-500 bg-blue-50/50 dark:bg-blue-950/50" : ""
                   }`}
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Checkbox
-                          checked={chain.selected}
-                          onCheckedChange={(checked) =>
-                            handleChainSelectionChange(index, "selected", checked as boolean)
-                          }
-                        />
-                        <div className="flex items-center gap-2">
-                          <ChainIcon 
-                            chainName={chain.chainName} 
-                            size={24}
-                            className="w-6 h-6"
-                          />
-                          <div>
-                            <div className="font-medium">
-                              {chain.chainName.replace("-mainnet", "").replace("-", " ")}
-                            </div>
-                            <div className="text-sm text-muted-foreground flex items-center gap-1">
-                              <TokenIcon symbol="USDC" size={16} className="w-4 h-4" />
-                              Available: {formatUnits(BigInt(chain.maxAmount), 6)} USDC
-                            </div>
-                          </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <ChainIcon 
+                        chainName={chain.chainName} 
+                        size={24}
+                        className="w-6 h-6"
+                      />
+                      <div>
+                        <div className="font-medium">
+                          {getChainDisplayName(chain.chainName)}
+                        </div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                          <TokenIcon symbol="USDC" size={16} className="w-4 h-4" />
+                          Available: {formatUnits(BigInt(chain.maxAmount), 6)}
                         </div>
                       </div>
-
-                      {chain.selected && <Badge variant="secondary">Selected</Badge>}
                     </div>
 
-                    {chain.selected && (
-                      <div className="flex gap-2">
-                        <div className="flex-1">
-                          <Label htmlFor={`amount-${index}`} className="text-sm">
-                            Amount to consolidate
-                          </Label>
-                          <Input
-                            id={`amount-${index}`}
-                            type="text"
-                            value={chain.amount}
-                            onChange={(e) => {
-                              const value = e.target.value
-                              // Only allow numbers and decimal point
-                              if (value === '' || /^\d*\.?\d*$/.test(value)) {
-                                handleChainSelectionChange(index, "amount", value)
-                              }
-                            }}
-                            placeholder="0.00"
-                            className="mt-1"
-                          />
-                        </div>
-                        <div className="flex items-end">
-                          <Button variant="outline" onClick={() => handleMaxClick(index)} className="mb-0">
-                            Max
-                          </Button>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <Input
+                          type="text"
+                          value={chain.amount || ""}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            // Only allow numbers and decimal point
+                            if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                              handleChainSelectionChange(index, "amount", value)
+                              // Automatically select/deselect based on amount
+                              const hasAmount = value !== '' && Number.parseFloat(value || "0") > 0
+                              handleChainSelectionChange(index, "selected", hasAmount)
+                            }
+                          }}
+                          onFocus={(e) => {
+                            // Select all text when focused if it's "0" or empty
+                            if (e.target.value === "0" || e.target.value === "") {
+                              e.target.select()
+                            }
+                          }}
+                          placeholder="0"
+                          className="w-24 text-right"
+                        />
                       </div>
-                    )}
+                      <Button variant="outline" onClick={() => handleMaxClick(index)} size="sm">
+                        Max
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               ))

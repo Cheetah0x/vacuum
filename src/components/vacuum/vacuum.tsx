@@ -77,7 +77,7 @@ export const Vacuum: React.FC = () => {
             <Zap className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-            USDC Vacuum Dashboard
+            Fragmentation Vacuum Dashboard
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Consolidate your USDC holdings across multiple blockchains

@@ -117,6 +117,7 @@ export const useVacuumState = () => {
 
     // Utility functions
     resetAllState,
+    resetConsolidation,
     resetExecution,
 
     // Calculated values

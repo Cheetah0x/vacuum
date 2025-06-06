@@ -30,3 +30,15 @@ export const getChainIconData = (chainName: string) => {
     hasIcon: !!iconPath
   }
 }
+
+// Helper function to get proper chain display name
+export const getChainDisplayName = (chainName: string): string => {
+  const chainMap: Record<string, string> = {
+    "eth-mainnet": "Ethereum",
+    "matic-mainnet": "Polygon", 
+    "optimism-mainnet": "Optimism",
+    "arbitrum-mainnet": "Arbitrum",
+    "base-mainnet": "Base"
+  }
+  return chainMap[chainName] || chainName.replace("-mainnet", "").replace("-", " ")
+}

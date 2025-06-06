@@ -31,6 +31,7 @@ export interface VacuumState {
 
   // Utility functions
   resetExecution: () => void
+  resetConsolidation: () => void
 
   // Calculated values
   totalSelectedAmount: number
